@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { buttonStyle, backButtonStyle } from "../styles";
+
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200";
 const labelStyle = "text-gray-500 font-medium -mb-2";
 
@@ -5,6 +8,12 @@ export default function Login() {
   return (
     <main className="flex min-h-screen mb-auto justify-center items-center bg-gradient-to-br from-orange-100 via-white to-sky-100">
       <div className="flex flex-col w-lg h-fit shadow-lg p-8 rounded-lg bg-white">
+        <Link href="/">
+          <button className={backButtonStyle} style={{ fontFamily: "Georgia" }}>
+            Back
+          </button>
+        </Link>
+
         <h1 
         className="text-4xl text-black font-semibold" 
         style={{ fontFamily: "Georgia" }}
@@ -40,6 +49,12 @@ export default function Login() {
             type="password"
             placeholder="Password"
           />
+
+          <Link href="">
+            <button className={buttonStyle} style={{ fontFamily: "Georgia" }}>
+              Sign In
+            </button>
+          </Link>
         </div>
       </div>
     </main>
