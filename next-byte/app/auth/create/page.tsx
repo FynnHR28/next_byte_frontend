@@ -6,7 +6,7 @@ const labelStyle = "text-gray-500 font-medium -mb-2";
 
 export default function Create() {
   return (
-    <main className="flex min-h-screen mb-auto justify-center items-center bg-gradient-to-br from-orange-100 via-white to-sky-100">
+    <main className="flex min-h-screen justify-center items-center bg-app-gradient">
       <Link href="/">
         <button className={backButtonStyle} style={{ fontFamily: "Georgia" }}>
           Back
@@ -64,7 +64,7 @@ export default function Create() {
             placeholder="Password"
           />
 
-          <Link href="">
+          <Link href="/home">
             <button className={buttonStyle} style={{ fontFamily: "Georgia" }}>
               Create
             </button>

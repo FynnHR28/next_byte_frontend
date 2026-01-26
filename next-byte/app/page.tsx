@@ -2,12 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 const buttonStyle = 
-"bg-gradient-to-tr from-cyan-200 to-sky-300 w-40 h-sm rounded-full text-black px-4 py-2 rounded \
+"bg-gradient-to-tr from-stone-200 to-neutral-300 w-40 h-sm rounded-full text-black px-4 py-2 rounded \
 hover:outline hover:outline-3 hover:outline-orange-300 hover:scale-102 ease-in-out";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen mb-auto justify-center items-center bg-gradient-to-br from-orange-100 via-white to-sky-100">
+    <main className="flex min-h-screen justify-center items-center bg-app-gradient">
       <div className="flex flex-col items-center gap-4">
         <Image
           src="/nextbyte_animated.gif"
@@ -33,6 +33,7 @@ export default function Home() {
               Create Account
             </button>
           </Link>
+
         </div>
       </div>
     </main>
