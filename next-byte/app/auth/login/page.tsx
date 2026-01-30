@@ -29,7 +29,10 @@ export default function Login() {
           query: `
             mutation Login($email: String!, $password: String!) {
               login(email: $email, password: $password) {
-                id
+                token,
+                user{
+                  id
+                }
               }
             }
           `,
@@ -40,6 +43,8 @@ export default function Login() {
       if (result.errors?.length > 0) {
         throw new Error(result.errors[0].message);
       }
+      localStorage.setItem("access_token", result.data.login.token );
+      console.log(`Record auth token in local storage: ${result.data.login.token}`);
       router.push("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to sign in");
