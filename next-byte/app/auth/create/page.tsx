@@ -41,7 +41,7 @@ export default function Create() {
       if (result.errors?.length > 0) {
         throw new Error(result.errors[0].message);
       }
-      router.push("/home");
+      router.push("/auth/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to create account");
     } finally {

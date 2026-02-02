@@ -1,13 +1,15 @@
 "use client";
+const TOKEN_KEY = process.env.NEXT_PUBLIC_TOKEN_KEY;
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { buttonStyle, backButtonStyle } from "../styles";
+import { auth_request, noauth_request } from "@/api_client/api_request";
 
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200";
 const labelStyle = "text-gray-500 font-medium -mb-2";
-const GRAPHQL_URL = process.env.GRAPHQL_URL ?? "http://localhost:9000/graphql";
+
 
 export default function Login() {
   const router = useRouter(); 
@@ -22,10 +24,7 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(GRAPHQL_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const result = await noauth_request({
           query: `
             mutation Login($email: String!, $password: String!) {
               login(email: $email, password: $password) {
@@ -37,14 +36,8 @@ export default function Login() {
             }
           `,
           variables: { email, password },
-        }),
-      });
-      const result = await response.json();
-      if (result.errors?.length > 0) {
-        throw new Error(result.errors[0].message);
-      }
-      localStorage.setItem("access_token", result.data.login.token );
-      console.log(`Record auth token in local storage: ${result.data.login.token}`);
+      })
+      localStorage.setItem(`${TOKEN_KEY}`, result.data.login.token );
       router.push("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to sign in");

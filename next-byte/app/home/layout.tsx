@@ -1,7 +1,12 @@
 "use client";
 
+
+import { auth_request } from "@/api_client/api_request";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+const TOKEN_KEY = process.env.NEXT_PUBLIC_TOKEN_KEY
 
 const navRouteStyle = "text-stone-600 text-lg hover:underline hover:underline-offset-6 hover:text-stone-800";
 const navActiveStyle = "text-stone-900 text-lg underline underline-offset-6";
@@ -13,6 +18,19 @@ export default function HomeLayout({
 }) {
   const pathname = usePathname(); // Get the current URL path (reacts to changes)
   const isActive = (href: string) => pathname === href; // Active if link href matches current url path
+  const router = useRouter();
+  const logout = async () => {
+    const resp = await auth_request({
+      query: `
+          mutation logout {
+            logout 
+          }
+          `
+      })
+    localStorage.removeItem(`${TOKEN_KEY}`)
+    router.push('/auth/login')
+    
+  }
 
   return (
     <main className="min-h-screen bg-app-gradient">
@@ -54,6 +72,15 @@ export default function HomeLayout({
         >
           Search
         </Link>
+        <div className="w-full flex justify-end">
+            <button 
+              className={`cursor-pointer ${navRouteStyle}`}  
+              style={{ fontFamily: "Georgia" }}
+              onClick={() => logout()}
+            >
+              Logout
+            </button>
+        </div>
       </div>
       {children}
     </main>

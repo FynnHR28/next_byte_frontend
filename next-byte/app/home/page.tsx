@@ -1,9 +1,72 @@
+"use client";
+import { auth_request } from "@/api_client/api_request";
+import { useState, useEffect } from 'react'
+import { useRouter } from "next/navigation";
+import { TailSpin } from "react-loader-spinner";
+
+ 
 export default function Home() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
+    const [userData, setUserData] = useState(null)
+
+    useEffect(() => {
+        async function fetch_user_data() {
+            try {
+                const response = await auth_request({
+                    query: `
+                        query getUser {
+                            user {
+                                username,
+                                created_at
+                            }
+                        }
+                    `
+                })
+                console.log(response.data.user)
+                // unpack the username and created at fields into this client side object
+                setUserData({...response.data.user})
+                console.log(userData)
+            }
+            catch (err){
+                console.log(err);
+                router.push('/')
+            }
+            finally {
+                setIsLoading(false)
+            }
+        } 
+        fetch_user_data()
+        
+    }, [])
+    
+
     return (
         <div className="p-10">
-            <p className="text-2xl text-stone-800" style={{ fontFamily: "Georgia" }}>
-                Home Page...
-            </p>
+            {
+                isLoading ? ( 
+                    <TailSpin
+                        visible={true}
+                        height="80"
+                        width="80"
+                        color="#F28C28"
+                        ariaLabel="tail-spin-loading"
+                        radius="1"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                    />
+                ) : (
+                    <div>
+                        <p className="text-2xl text-stone-800" style={{ fontFamily: "Georgia" }}>
+                            Welcome {userData.username}
+                        </p>
+                        <p className="text-sm text-stone-800" style={{ fontFamily: "Georgia" }}>
+                            Active since {userData.created_at}
+                        </p>
+                    </div>
+                    
+                )
+            }
         </div>
     );
 }
