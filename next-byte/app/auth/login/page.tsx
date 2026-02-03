@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { buttonStyle, backButtonStyle } from "../styles";
-import { auth_request, noauth_request } from "@/api_client/api_request";
+import { request } from "@/api_client/api_request";
 
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200";
 const labelStyle = "text-gray-500 font-medium -mb-2";
@@ -23,7 +23,7 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const result = await noauth_request({
+      await request({
           query: `
             mutation Login($email: String!, $password: String!) {
               login(email: $email, password: $password) {

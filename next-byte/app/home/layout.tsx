@@ -1,10 +1,10 @@
 "use client";
 
-import { auth_request } from "@/api_client/api_request";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Settings } from "lucide-react";
+import { request } from "@/api_client/api_request";
 
 const navRouteStyle = "text-stone-600 text-lg hover:underline hover:underline-offset-6 hover:text-stone-800";
 const navActiveStyle = "text-stone-900 text-lg underline underline-offset-6";
@@ -18,7 +18,7 @@ export default function HomeLayout({
   const isActive = (href: string) => pathname === href; // Active if link href matches current url path
   const router = useRouter();
   const logout = async () => {
-    await auth_request({
+    await request({
       query: `
           mutation logout {
             logout 

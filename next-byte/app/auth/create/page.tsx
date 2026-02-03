@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { buttonStyle, backButtonStyle } from "../styles";  
+import { request } from "@/api_client/api_request";
 
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200";
 const labelStyle = "text-gray-500 font-medium -mb-2";
-const GRAPHQL_URL = process.env.GRAPHQL_URL ?? "http://localhost:9000/graphql";
 
 export default function Create() {
   const router = useRouter(); 
@@ -23,11 +23,7 @@ export default function Create() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(GRAPHQL_URL, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      await request({
           query: `
             mutation CreateUser($username: String!, $password: String!, $email: String!) {
               createUser(username: $username, password: $password, email: $email) {
@@ -36,12 +32,7 @@ export default function Create() {
             }
           `,
           variables: { username, password, email },
-        }),
-      });
-      const result = await response.json();
-      if (result.errors?.length > 0) {
-        throw new Error(result.errors[0].message);
-      }
+      })
       router.push("/auth/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to create account");

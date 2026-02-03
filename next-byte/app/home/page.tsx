@@ -1,5 +1,5 @@
 "use client";
-import { auth_request } from "@/api_client/api_request";
+import { request } from "@/api_client/api_request";
 import { useState, useEffect } from 'react'
 import { useRouter } from "next/navigation";
 import { TailSpin } from "react-loader-spinner";
@@ -17,7 +17,7 @@ export default function Home() {
     useEffect(() => {
         async function fetch_user_data() {
             try {
-                const response = await auth_request({
+                const response = await request({
                     query: `
                         query getUser {
                             user {
@@ -28,7 +28,7 @@ export default function Home() {
                     `
                 })
                 console.log(response.data.user)
-                // unpack the username and created at fields into this client side object
+                // Unpack the username and created at fields into this client side object
                 setUserData({...response.data.user})
                 console.log(userData)
             }
