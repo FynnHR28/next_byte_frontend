@@ -1,28 +1,17 @@
 
-const GRAPHQL_URL = process.env.GRAPHQL_URL ?? "http://localhost:9000/graphql";
-const TOKEN_KEY = process.env.NEXT_PUBLIC_TOKEN_KEY
+const GRAPHQL_URL =
+  process.env.NEXT_PUBLIC_GRAPHQL_URL ?? "http://localhost:9000/graphql";
 
 /* 
 Generic api request on protected data. Requires a valid JWT, default method is POST
 Record is interpreted by TS as an object with keys of type string and values of type string
 */
 export const auth_request = async (body:object, method:string="POST", headers:Record<string, string>={}) => {
-    
-    // retrieve token if exists
-    const token = localStorage.getItem(`${TOKEN_KEY}`)
-    
-    // if no token exists in local storage, immediately throw error, then redirect to login from the page itself
-    if(!token){
-        console.log('No token present, redirecting home')
-        throw new Error('Unauthorized request, redirecting...')
-    }
-    console.log('token does exist, requesting data off server')
-    // If token exists (regardless of it being expired or not), send request
     try {
         const response = await fetch(GRAPHQL_URL, {
         method: method,
+        credentials: "include",
         headers: { 
-            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
             //additional headers if necessary
             ...headers
@@ -44,6 +33,7 @@ export const noauth_request = async (body:object, method:string="POST", headers:
     try {
         const response = await fetch(GRAPHQL_URL, {
             method: method,
+            credentials: "include",
             headers: { 
                 "Content-Type": "application/json",
                 //additional headers if necessary

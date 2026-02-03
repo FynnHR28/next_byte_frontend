@@ -1,5 +1,4 @@
 "use client";
-const TOKEN_KEY = process.env.NEXT_PUBLIC_TOKEN_KEY;
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -37,7 +36,6 @@ export default function Login() {
           `,
           variables: { email, password },
       })
-      localStorage.setItem(`${TOKEN_KEY}`, result.data.login.token );
       router.push("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to sign in");

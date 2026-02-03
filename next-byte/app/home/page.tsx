@@ -4,11 +4,15 @@ import { useState, useEffect } from 'react'
 import { useRouter } from "next/navigation";
 import { TailSpin } from "react-loader-spinner";
 
+interface UserData {
+    username: string;
+    created_at: string;
+}
  
 export default function Home() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
-    const [userData, setUserData] = useState(null)
+    const [userData, setUserData] = useState<UserData | null>(null)
 
     useEffect(() => {
         async function fetch_user_data() {
@@ -58,13 +62,12 @@ export default function Home() {
                 ) : (
                     <div>
                         <p className="text-2xl text-stone-800" style={{ fontFamily: "Georgia" }}>
-                            Welcome {userData.username}
+                            Welcome {userData?.username}
                         </p>
                         <p className="text-sm text-stone-800" style={{ fontFamily: "Georgia" }}>
-                            Active since {userData.created_at}
+                            Active since {userData?.created_at}
                         </p>
                     </div>
-                    
                 )
             }
         </div>
