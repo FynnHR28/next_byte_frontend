@@ -7,19 +7,20 @@ import { buttonStyle, backButtonStyle } from "../styles";
 import { request } from "@/api_client/api_request";
 import ReForm from "@/components/userInput/reusableForm"
 import { Input } from "@/components/userInput/reusableInput";
+import ExistingAccountOverlay from "../components/existingAccountOverlay";
 
-const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200";
-const labelStyle = "text-gray-500 font-medium -mb-2";
+const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200 w-full";
+const labelStyle = "text-gray-500 font-medium";
 
 export default function Create() {
   const router = useRouter(); 
   const [serverError, setServerError] = useState('')
+  const [email, setEmail] = useState("")
 
   const handleSubmit = async (data:Record<string,string>) => {
     const username = data['username'];
     const password = data['password'];
     const email = data['email'];
-
     try {
       await request({
           query: `
@@ -54,7 +55,19 @@ export default function Create() {
           Create Account
         </h1>
 
-        <ReForm className="flex flex-col gap-4 mt-6" onSubmit={handleSubmit} error={serverError}>
+        {/* TODO: Have shared file with errors to have a single source of truth?*/}
+        {serverError === "Error: Account was deleted" ? (
+          <ExistingAccountOverlay email={email} onResolved={() => setServerError("")} />
+        ) : null}
+
+        <ReForm
+          className="flex flex-col gap-4 mt-6"
+          onSubmit={handleSubmit}
+          error={serverError}
+          onValuesChange={(values: Record<string, string>) => {
+            setEmail(values.email ?? "");
+          }}
+        >
             <Input 
               inputStyle={inputStyle} 
               labelStyle={labelStyle} 
@@ -62,7 +75,7 @@ export default function Create() {
               placeholder='Email'
               fontStyle={{ fontFamily: "Verdana" }}
               rules={{
-                required: "email is required",
+                required: "Email is required",
                 pattern: {
                   value: /^[A-Z0-9_.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: "invalid email address"
@@ -75,10 +88,10 @@ export default function Create() {
               labelStyle={labelStyle}
               type="text"
               name="username"
-              placeholder="username"
+              placeholder="Username"
               fontStyle={{ fontFamily: "Verdana" }}
               rules={{
-                required: "username is required"
+                required: "Username is required"
               }}
             />
             <Input 
@@ -89,7 +102,7 @@ export default function Create() {
               placeholder="Password"
               fontStyle={{ fontFamily: "Verdana" }}
               rules={{
-                required: "password is required"
+                required: "Password is required"
               }}
             />
 

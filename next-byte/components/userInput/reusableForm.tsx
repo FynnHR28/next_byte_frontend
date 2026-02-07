@@ -4,15 +4,20 @@ import { buttonStyle } from "@/app/auth/styles";
 
 
 
-const ReForm = ({ defaultValues, children, onSubmit, className, error }:any) =>  {
+const ReForm = ({ defaultValues, children, onSubmit, className, error, onValuesChange }:any) =>  {
   const methods = useForm({ defaultValues });
-  const { register, formState, handleSubmit } = methods;
+  const { register, formState, handleSubmit, watch } = methods;
   const { errors } = formState;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  
-
+  useEffect(() => {
+    if (!onValuesChange) {
+      return;
+    }
+    const subscription = watch((values) => onValuesChange(values));
+    return () => subscription.unsubscribe();
+  }, [onValuesChange, watch]);
 
   return (
     <form className={`flex-col ${className}`} onSubmit={handleSubmit(onSubmit)}>
