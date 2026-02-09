@@ -19,18 +19,17 @@ export default function Home() {
             try {
                 const response = await request({
                     query: `
-                        query getUser {
-                            user {
+                        query getMe {
+                            me {
                                 username,
                                 created_at
                             }
                         }
                     `
                 })
-                console.log(response.data.user)
+                console.log(response.data.me)
                 // Unpack the username and created at fields into this client side object
-                setUserData({...response.data.user})
-                console.log(userData)
+                setUserData({...response.data.me})
             }
             catch (err){
                 console.log(err);
