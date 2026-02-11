@@ -12,7 +12,6 @@ import ExistingAccountOverlay from "../components/existingAccountOverlay";
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200 w-full";
 const labelStyle = "text-gray-500 font-medium";
 
-
 export default function Login() {
   const router = useRouter(); 
   const [serverError, setServerError] = useState('')
