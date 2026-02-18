@@ -27,6 +27,9 @@ export default function Recipes() {
 			id: string;
 			name: string;
 			description?: string | null;
+			servings?: number | null;
+			prep_time?: number | null;
+			cook_time?: number | null;
 			ingredients?: Array<{ id?: string; display_text?: string | null }>;
 			instructions?: Array<{ id?: string; position?: number | null; description?: string | null }>;
 		}>
@@ -145,6 +148,9 @@ export default function Recipes() {
 							id
 							name
 							description
+							servings
+							prep_time
+							cook_time
 							ingredients {
 								id
 								display_text
@@ -173,70 +179,43 @@ export default function Recipes() {
 	};
 
 	// Open the recipe editor
-	const openEdit = async (recipeId: string) => {
+	const openEdit = (recipeId: string) => {
 		setServerError("");
 		setEditingRecipeId(recipeId);
 		setStep(0);
 		setIsRecipeCreatorOpen(true); // Open recipe creator. Populate it with existing data below. 
 
-		// Pull the recipe to fill out the form
-		try {
-			const data = await request({
-				query: `
-					query Recipe($id: ID!) {
-						recipe(id: $id) {
-							id
-							name
-							description
-							servings
-							prep_time
-							cook_time
-							ingredients {
-								id
-								display_text
-							}
-							instructions {
-								id
-								position
-								description
-							}
-						}
-					}
-				`,
-				variables: { id: recipeId },
-			});
-
-			const recipe = data.data?.recipe;
-			if (!recipe) return;
-
-			// Create a form populated with the recipe data (or defaults if none exists)
-			// While editing, changes will be made to the form state
-			setForm({
-				name: recipe.name ?? "",
-				description: recipe.description ?? "",
-				servings: recipe.servings?.toString() ?? "2",
-				prepMinutes: recipe.prep_time?.toString() ?? "0",
-				cookMinutes: recipe.cook_time?.toString() ?? "0",
-				ingredients:
-					recipe.ingredients?.length > 0
-						? recipe.ingredients.map((item: { id: string; display_text: string }) => ({
-								id: item.id,
-								display_text: item.display_text ?? "",
-							}))
-						: [{ id: undefined, display_text: "" }],
-				instructions:
-					recipe.instructions?.length > 0
-						? recipe.instructions.map(
-								(item: { id: string; description: string }) => ({
-									id: item.id,
-									description: item.description ?? "",
-								})
-						  )
-						: [{ id: undefined, description: "" }],
-			});
-		} catch (err) {
-			setServerError(err instanceof Error ? err.message : "Unable to load recipe.");
+		const recipe = recipes.find((item) => item.id === recipeId);
+		if (!recipe) {
+			setServerError("Unable to load recipe.");
+			return;
 		}
+
+		// Create a form populated with the recipe data (or defaults if none exists)
+		// While editing, changes will be made to the form state
+		setForm({
+			name: recipe.name ?? "",
+			description: recipe.description ?? "",
+			servings: recipe.servings?.toString() ?? "2",
+			prepMinutes: recipe.prep_time?.toString() ?? "0",
+			cookMinutes: recipe.cook_time?.toString() ?? "0",
+			ingredients:
+				recipe.ingredients && recipe.ingredients.length > 0
+					? recipe.ingredients.map((item: { id?: string; display_text?: string | null }) => ({
+							id: item.id,
+							display_text: item.display_text ?? "",
+						}))
+					: [{ id: undefined, display_text: "" }],
+			instructions:
+				recipe.instructions && recipe.instructions.length > 0
+					? recipe.instructions.map(
+							(item: { id?: string; description?: string | null }) => ({
+								id: item.id,
+								description: item.description ?? "",
+							})
+					  )
+					: [{ id: undefined, description: "" }],
+		});
 	};
 
 	const handleDelete = async (recipeId: string) => {
