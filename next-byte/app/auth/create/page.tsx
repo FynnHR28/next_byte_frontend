@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { buttonStyle, backButtonStyle } from "../styles";  
-import { request } from "@/api_client/api_request";
+import { backButtonStyle } from "../styles";  
 import ReForm from "@/components/userInput/reusableForm"
 import { Input } from "@/components/userInput/reusableInput";
-import ExistingAccountOverlay from "../components/existingAccountOverlay";
+import ExistingAccountOverlay from "../../../components/auth/existingAccountOverlay";
+import { createUser } from "@/api_client/auth";
 
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200 w-full";
 const labelStyle = "text-gray-500 font-medium";
@@ -21,21 +21,12 @@ export default function Create() {
     const username = data['username'];
     const password = data['password'];
     const email = data['email'];
+
     try {
-      await request({
-          query: `
-            mutation CreateUser($username: String!, $password: String!, $email: String!) {
-              createUser(username: $username, password: $password, email: $email) {
-                id
-              }
-            }
-          `,
-          variables: { username, password, email },
-      })
+      await createUser(username, password, email);
       router.push("/auth/login");
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Unable to create account");
-    } finally {
+      setServerError(err instanceof Error ? err.message : "Unknown error occurred.");
     }
   };
 
@@ -80,7 +71,6 @@ export default function Create() {
                   value: /^[A-Z0-9_.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: "invalid email address"
                 }
-               
               }}
             />
             <Input 

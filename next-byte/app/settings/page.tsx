@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { request } from "@/api_client/api_request";
+import { deactivateAccount } from "@/api_client/user";
 
 const buttonStyle = "text-xl text-stone-600 hover:text-stone-800 bg-white rounded-full px-4 py-2 shadow-md hover:shadow-lg hover:scale-102 ease-in-out mb-6 cursor-pointer";
 
@@ -17,16 +17,10 @@ export default function Settings() {
     setIsDeletingAccount(true);
 
     try {
-      await request({
-          query: `
-            mutation DeactivateUser {
-              deactivateUser
-            }
-          `,
-      })
-      router.push('/auth/login')
+      await deactivateAccount();
+      router.push('/auth/login');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to delete account");
+      setError(err instanceof Error ? err.message : "Unknown error occurred.");
     } finally {
       setIsDeletingAccount(false);
     }

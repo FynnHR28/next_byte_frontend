@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { backButtonStyle } from "../styles";
 import Link from "next/link";
-import { buttonStyle, backButtonStyle } from "../styles";
-import { request } from "@/api_client/api_request";
 import ReForm from "@/components/userInput/reusableForm"
 import { Input } from "@/components/userInput/reusableInput";
-import ExistingAccountOverlay from "../components/existingAccountOverlay";
+import ExistingAccountOverlay from "../../../components/auth/existingAccountOverlay";
+import { loginUser } from "@/api_client/auth";
 
 const inputStyle = "bg-gray-50 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-200 w-full";
 const labelStyle = "text-gray-500 font-medium";
@@ -18,30 +18,14 @@ export default function Login() {
   const [email, setEmail] = useState("")
 
   const handleSubmit = async (data:Record<string, string>) => {
-    
     const email = data['email'];
     const password = data['password'];
 
     try {
-      await request({
-          query: `
-            mutation Login($email: String!, $password: String!) {
-              login(email: $email, password: $password) {
-                token,
-                user{
-                  id
-                }
-              }
-            }
-          `,
-          variables: { email, password },
-      })
+      await loginUser(email, password);
       router.push("/home");
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Unable to login");
-      console.log("serverError:", serverError);
-    } finally {
-
+      setServerError(err instanceof Error ? err.message : "Unknown error occurred.")
     }
   };
 
