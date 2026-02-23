@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { FormState } from "@/components/recipes/types";
+import type { RecipeFormState } from "@/components/recipes/types";
 
 type RecipeCreatorProps = {
 	isOpen: boolean;
 	editingRecipeId: string | null;
-	initialForm: FormState;
+	initialForm: RecipeFormState;
 	onClose: () => void;
 	onSave: (recipeInput: {
 		name: string;
@@ -38,7 +38,7 @@ const RecipeCreator = ({
 	onSave,
 }: RecipeCreatorProps) => {
 	const [step, setStep] = useState(0);
-	const [form, setForm] = useState<FormState>(initialForm);
+	const [form, setForm] = useState<RecipeFormState>(initialForm);
 	const [serverError, setServerError] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,7 +63,7 @@ const RecipeCreator = ({
 	if (!isOpen) return null;
 
 	const updateField = (
-		key: keyof Omit<FormState, "ingredients" | "instructions">,
+		key: keyof Omit<RecipeFormState, "ingredients" | "instructions">,
 		value: string
 	) => {
 		setForm((prev) => ({ ...prev, [key]: value }));
