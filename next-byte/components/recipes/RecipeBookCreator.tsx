@@ -17,7 +17,7 @@ type RecipeBookCreatorProps = {
 	}) => Promise<void>;
 };
 
-const RecipeBook = ({
+const RecipeBookCreator = ({
 	isOpen,
 	editingRecipeBookId,
 	initialForm,
@@ -73,17 +73,12 @@ const RecipeBook = ({
 		return null;
 	}
 
-	// TODO: Add recipe selection UI to the form
-
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
 			<div className="w-full max-w-2xl max-h-[85vh] rounded-3xl bg-white shadow-2xl flex flex-col">
 				<div className="border-b border-stone-200 p-6">
 					<p className="text-xl text-stone-900" style={{ fontFamily: "Georgia" }}>
 						{editingRecipeBookId ? "Edit Recipe Book" : "Create Recipe Book"}
-					</p>
-					<p className="text-sm text-stone-500">
-						Group recipes into one place.
 					</p>
 				</div>
 
@@ -159,4 +154,4 @@ const RecipeBook = ({
 	);
 }
 
-export default RecipeBook;
+export default RecipeBookCreator;

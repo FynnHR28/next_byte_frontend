@@ -13,7 +13,8 @@ import {
 	updateRecipe,
 	updateRecipeBook
 } from "@/api_client/recipes";
-import RecipeCard from "@/components/recipes/RecipeCard";
+import ClosedRecipeBook from "@/components/recipes/ClosedRecipeBook";
+import OpenRecipeBook from "@/components/recipes/OpenRecipeBook";
 import RecipeCreator from "@/components/recipes/RecipeCreator";
 import RecipeBookCreator from "@/components/recipes/RecipeBookCreator";
 import type { RecipeFormState, RecipeBookFormState } from "@/components/recipes/types";
@@ -43,8 +44,7 @@ export default function Recipes() {
 	};
 	const [editingRecipeBookId, setEditingRecipeBookId] = useState<string | null>(null);
 	const [initialRecipeBookForm, setInitialRecipeBookForm] = useState<RecipeBookFormState>(emptyRecipeBookForm);
-	const [selectedRecipeBookId, setSelectedRecipeBookId] = useState<string | null>(null);
-	const [selectedBookRecipeId, setSelectedBookRecipeId] = useState<string | null>(null);
+	const [openRecipeBookId, setOpenRecipeBookId] = useState<string | null>(null);
 
 	const { recipes, recipeBooks, recipeBookRecipes, error, loadRecipes, loadRecipeBooks, loadRecipesForRecipeBook } = useRecipes();
 	const [recipesActionError, setRecipesActionError] = useState("");
@@ -107,17 +107,16 @@ export default function Recipes() {
 		setIsRecipeBookCreatorOpen(true);
 	}
 
-	const selectRecipeBook = async (recipeBookId: string) => {
-		setSelectedRecipeBookId(recipeBookId);
-		setSelectedBookRecipeId(null);
+	const openRecipeBook = async (recipeBookId: string) => {
+		setOpenRecipeBookId(recipeBookId);
 		if (!recipeBookRecipes.has(recipeBookId)) {
 			await loadRecipesForRecipeBook(recipeBookId);
 		}
 	}
 
-	const selectedRecipeBook = recipeBooks.find((book) => book.id === selectedRecipeBookId) ?? null;
-	const selectedBookRecipes = selectedRecipeBookId ? (recipeBookRecipes.get(selectedRecipeBookId) ?? []) : [];
-	const selectedBookRecipe = selectedBookRecipes.find((recipe) => recipe.id === selectedBookRecipeId) ?? null;
+	const closeRecipeBookReader = () => setOpenRecipeBookId(null);
+	const openRecipeBookDetails = recipeBooks.find((book) => book.id === openRecipeBookId) ?? null;
+	const openRecipeBookRecipes = openRecipeBookId ? (recipeBookRecipes.get(openRecipeBookId) ?? []) : [];
 
 	const handleSaveRecipeBook = async (recipeBookInput: RecipeBookSaveInput) => {
 		// Call update or create based on whether we're editing or creating.
@@ -218,90 +217,27 @@ export default function Recipes() {
 				{recipesActionError ? (
 					<p className="text-sm text-red-500">{recipesActionError}</p>
 				) : null}
-			{/* Recipe list */}
-			{recipes.length ? (
-				<div className="grid gap-4">
-					{recipes.map((recipe) => (
-						<RecipeCard
-							key={recipe.id}
-							recipe={recipe}
-							// Pass the various callbacks. Since RecipeCard has the ID it will pass it when it calls these. 
-							onEdit={openRecipeEditor} 
-							onDelete={handleDelete} 
-						/>
-					))}
-				</div>
-				) : (
-					<p className="text-sm text-stone-500">No recipes yet. Create your first recipe.</p>
-				)}
 
-				<div className="space-y-3">
+				{/* Recipe Books */}
+				<div className="flex flex-col gap-4">
 					<p className="text-xl text-stone-900" style={{ fontFamily: "Georgia" }}>Recipe Books</p>
 					{recipeBooks.length ? (
-						<div className="grid gap-3 md:grid-cols-2">
-							{recipeBooks.map((book) => (
-								<button
-									key={book.id}
-									type="button"
-									onClick={() => selectRecipeBook(book.id)}
-									className={`text-left p-4 rounded-2xl border bg-white shadow-sm hover:shadow-md transition ${
-										selectedRecipeBookId === book.id
-											? "border-stone-400"
-											: "border-stone-200 hover:border-stone-300"
-									}`}
-								>
-									<p className="text-lg text-stone-900" style={{ fontFamily: "Georgia" }}>{book.name}</p>
-									<p className="text-xs text-stone-500 mt-1">
-										{book.is_public ? "Public" : "Private"}
-									</p>
-								</button>
-							))}
+						<div className="flex flex-col">
+							<div className="flex items-end">
+								{recipeBooks.map((book) => (
+									<ClosedRecipeBook
+										key={book.id}
+										recipeBook={book}
+										onOpen={openRecipeBook}
+									/>
+								))}
+							</div>
+							<hr className="basis-full border-t-5 border-stone-500" />
 						</div>
-						) : (
-							<p className="text-sm text-stone-500">No recipe books yet. Create your first recipe book.</p>
-						)}
-					</div>
-
-					{selectedRecipeBook ? (
-						<div className="space-y-3">
-							<p className="text-lg text-stone-900" style={{ fontFamily: "Georgia" }}>
-								Recipes In {selectedRecipeBook.name}
-							</p>
-							{selectedBookRecipes.length ? (
-								<div className="flex flex-wrap gap-2">
-									{selectedBookRecipes.map((recipe) => (
-										<button
-											key={recipe.id}
-											type="button"
-											onClick={() => setSelectedBookRecipeId(recipe.id)}
-											className={`px-3 py-2 rounded-full text-sm border ${
-												selectedBookRecipeId === recipe.id
-													? "border-stone-700 bg-stone-900 text-stone-50"
-													: "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
-											}`}
-										>
-											{recipe.name || "Untitled Recipe"}
-										</button>
-									))}
-								</div>
-							) : (
-								<p className="text-sm text-stone-500">This book has no recipes yet.</p>
-							)}
-						</div>
-					) : null}
-
-					{selectedBookRecipe ? (
-						<div className="space-y-2">
-							<p className="text-lg text-stone-900" style={{ fontFamily: "Georgia" }}>
-								Selected Recipe
-							</p>
-							<RecipeCard
-								recipe={selectedBookRecipe}
-								onEdit={openRecipeEditor}
-								onDelete={handleDelete}
-							/>
-						</div>
-					) : null}
+					) : (
+						<p className="text-sm text-stone-500">No recipe books yet. Create your first recipe book.</p>
+					)}
+				</div>
 
 			<RecipeCreator
 				isOpen={isRecipeCreatorOpen}
@@ -311,16 +247,26 @@ export default function Recipes() {
 				onSave={handleSaveRecipe}
 			/>
 
-				<RecipeBookCreator
+			<RecipeBookCreator
 				isOpen={isRecipeBookCreatorOpen}
 				recipes={recipes}
 				editingRecipeBookId={editingRecipeBookId}
 				initialForm={initialRecipeBookForm}
 				onClose={closeRecipeBookCreator}
 				onSave={handleSaveRecipeBook} // TODO: Implement this and pass it down. It will need to call loadRecipeBooks after saving, and maybe loadRecipesForRecipeBook if we want to immediately show the recipes in the book after creating/editing it. 
-				/>
+			/>
 
-				{pendingDeleteRecipeId ? (
+			<OpenRecipeBook
+				key={openRecipeBookId ?? "closed-recipe-book"}
+				isOpen={Boolean(openRecipeBookId)}
+				recipeBookName={openRecipeBookDetails?.name ?? "Recipe Book"}
+				recipes={openRecipeBookRecipes}
+				onClose={closeRecipeBookReader}
+				onEdit={openRecipeEditor}
+				onDelete={handleDelete}
+			/>
+
+			{pendingDeleteRecipeId ? (
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
 					<div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl space-y-4">
 						<p className="text-lg text-stone-900" style={{ fontFamily: "Georgia" }}>
@@ -346,6 +292,7 @@ export default function Recipes() {
 					</div>
 				</div>
 			) : null}
+
 		</div>
 	);
 }
