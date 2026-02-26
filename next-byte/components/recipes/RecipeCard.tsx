@@ -98,60 +98,66 @@ const RecipeCard = ({ recipe, onEdit, onDelete }: RecipeCardProps) => {
         ) : null}
       </div>
 
-      {ingredients.length ? (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-wide text-stone-400">Ingredients</p>
-          <div className="space-y-2">
-            {ingredients.map((ingredient, index) => {
-              const key = ingredient.id ?? `ingredient-${index}`;
-              const isChecked = checkedIngredients.has(key);
-              return (
-                <label
-                  key={key}
-                  className="flex items-center gap-3 text-sm text-stone-700"
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => toggleChecked(setCheckedIngredients, key)}
-                  />
-                  <span className={isChecked ? "line-through text-stone-400" : ""}>
-                    {ingredient.display_text || "Unnamed ingredient"}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
+          {ingredients.length ? (
+            <div className="space-y-2">
+              {ingredients.map((ingredient, index) => {
+                const key = ingredient.id ?? `ingredient-${index}`;
+                const isChecked = checkedIngredients.has(key);
+                return (
+                  <label
+                    key={key}
+                    className="flex items-center gap-3 text-sm text-stone-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleChecked(setCheckedIngredients, key)}
+                    />
+                    <span className={isChecked ? "line-through text-stone-400" : ""}>
+                      {ingredient.display_text || "Unnamed ingredient"}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-stone-500">No ingredients yet.</p>
+          )}
         </div>
-      ) : null}
 
-      {instructions.length ? (
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-wide text-stone-400">Instructions</p>
-          <div className="space-y-3">
-            {instructions.map((instruction, index) => {
-              const key = instruction.id ?? `instruction-${index}`;
-              const isChecked = checkedInstructions.has(key);
-              return (
-                <label
-                  key={key}
-                  className="flex items-start gap-3 text-sm text-stone-700"
-                >
-                  <input
-                    type="checkbox"
-                    className="mt-1"
-                    checked={isChecked}
-                    onChange={() => toggleChecked(setCheckedInstructions, key)}
-                  />
-                  <span className={isChecked ? "line-through text-stone-400" : ""}>
-                    {instruction.description || "Instruction"}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
+          {instructions.length ? (
+            <div className="space-y-3">
+              {instructions.map((instruction, index) => {
+                const key = instruction.id ?? `instruction-${index}`;
+                const isChecked = checkedInstructions.has(key);
+                return (
+                  <label
+                    key={key}
+                    className="flex items-start gap-3 text-sm text-stone-700"
+                  >
+                    <input
+                      type="checkbox"
+                      className="mt-1"
+                      checked={isChecked}
+                      onChange={() => toggleChecked(setCheckedInstructions, key)}
+                    />
+                    <span className={isChecked ? "line-through text-stone-400" : ""}>
+                      {instruction.description || "Instruction"}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-stone-500">No instructions yet.</p>
+          )}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 };

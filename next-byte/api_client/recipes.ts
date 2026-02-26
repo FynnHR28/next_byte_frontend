@@ -218,6 +218,17 @@ export const updateRecipeBook = async (id: string, recipeBookInput: RecipeBookIn
   });
 }
 
+export const deleteRecipeBook = async (id: string) => {
+  await request({
+    query: `
+      mutation DeleteRecipeBook($id: ID!) {
+        deleteRecipeBook(recipeBookId: $id)
+      }
+    `,
+    variables: { id },
+  });
+}
+
 export const addRecipesToRecipeBook = async (recipeBookId: string, recipeIds: string[]) => {
   if (recipeIds.length < 1) return;
   await request({

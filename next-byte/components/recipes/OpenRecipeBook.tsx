@@ -2,7 +2,7 @@
 
 import type { Recipe } from "@/api_client/recipes";
 import RecipeCard from "@/components/recipes/RecipeCard";
-import { X } from "lucide-react";
+import { X, ArrowLeft, ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type OpenRecipeBookProps = {
@@ -10,6 +10,8 @@ type OpenRecipeBookProps = {
   recipeBookName: string;
   recipes: Recipe[];
   onClose: () => void;
+  onEditBook?: () => void;
+  onDeleteBook?: () => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 };
@@ -19,6 +21,8 @@ const OpenRecipeBook = ({
   recipeBookName,
   recipes,
   onClose,
+  onEditBook,
+  onDeleteBook,
   onEdit,
   onDelete,
 }: OpenRecipeBookProps) => {
@@ -33,7 +37,7 @@ const OpenRecipeBook = ({
       .filter(({ recipe, index }) => {
         if (!query) return true;
         const recipeName = (recipe.name ?? "").toLowerCase();
-        return recipeName.includes(query) || String(index + 1).includes(query);
+        return recipeName.includes(query);
       });
   }, [recipes, searchQuery]);
 
@@ -49,12 +53,30 @@ const OpenRecipeBook = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
-      <div className="w-[min(96vw,1700px)] space-y-3">
+      <div className="w-1/2 space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-xl text-stone-100" style={{ fontFamily: "Georgia" }}>
             {recipeBookName}
           </p>
           <div className="flex items-center gap-2">
+            {onEditBook ? (
+              <button
+                type="button"
+                onClick={onEditBook}
+                className="px-4 py-2 rounded-full border border-stone-200/40 text-stone-50 hover:border-stone-200/70 hover:bg-stone-100/10 text-sm"
+              >
+                Edit Book
+              </button>
+            ) : null}
+            {onDeleteBook ? (
+              <button
+                type="button"
+                onClick={onDeleteBook}
+                className="px-4 py-2 rounded-full border border-red-300/60 text-red-100 hover:border-red-200 hover:bg-red-200/15 text-sm"
+              >
+                Delete Book
+              </button>
+            ) : null}
             {!showTableOfContents ? (
               <button
                 type="button"
@@ -68,9 +90,9 @@ const OpenRecipeBook = ({
               type="button"
               onClick={onClose}
               aria-label="Close book"
-              className="h-10 w-10 rounded-full bg-stone-900 text-stone-50 hover:bg-stone-800 flex items-center justify-center"
+              className="cursor-pointer h-8 w-8 rounded-full bg-stone-900 text-stone-50 hover:bg-stone-800 flex items-center justify-center"
             >
-              <X size={18} />
+              <X size={14} />
             </button>
           </div>
         </div>
@@ -105,7 +127,7 @@ const OpenRecipeBook = ({
                       className="text-left rounded-xl border border-amber-200 bg-white/75 px-4 py-3 hover:border-amber-300 hover:bg-white"
                     >
                       <p className="text-sm text-stone-900">
-                        <span className="font-semibold">#{index + 1}</span> {recipe.name || "Untitled Recipe"}
+                        <span className="font-semibold"></span> {recipe.name || "Untitled Recipe"}
                       </p>
                     </button>
                   ))}
@@ -114,7 +136,7 @@ const OpenRecipeBook = ({
                 <p className="text-sm text-stone-700">No recipes match your search.</p>
               )
             ) : (
-              <p className="text-sm text-stone-700">This recipe book has no recipes yet.</p>
+              <p className="text-sm text-stone-700">No recipes yet.</p>
             )
           ) : hasRecipes && activeRecipe ? (
             <div className="space-y-4">
@@ -126,7 +148,7 @@ const OpenRecipeBook = ({
                   disabled={!canGoBack}
                   className="px-4 py-2 rounded-full border border-stone-300 bg-white text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed hover:border-stone-400"
                 >
-                  Back
+                  <ArrowLeft size={14} />
                 </button>
                 <p className="text-sm text-stone-700">
                   Recipe {clampedIndex + 1} of {recipes.length}
@@ -137,12 +159,12 @@ const OpenRecipeBook = ({
                   disabled={!canGoNext}
                   className="px-4 py-2 rounded-full border border-stone-300 bg-white text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed hover:border-stone-400"
                 >
-                  Next
+                  <ArrowRight size={14} />
                 </button>
               </div>
             </div>
           ) : (
-            <p className="text-sm text-stone-700">This recipe book has no recipes yet.</p>
+            <p className="text-sm text-stone-700">No recipes yet.</p>
           )}
         </div>
       </div>

@@ -9,103 +9,105 @@ const ClosedRecipeBook = ({
 }) => {
   const bookPalette = [
     {
-      base: "#c2410c",
-      gradient: "linear-gradient(to bottom, #fdba74, #ea580c, #c2410c)",
-      hoverBase: "#ea580c",
-      hoverGradient: "linear-gradient(to bottom, #ffedd5, #fdba74, #ea580c)",
-      spine: "#7c2d12",
+      base: "#a8654b",
+      gradient: "linear-gradient(to bottom, #dec3b5, #c8957f, #a8654b)",
+      hoverBase: "#b97b60",
+      hoverGradient: "linear-gradient(to bottom, #ecdbd2, #dec3b5, #b97b60)",
+      spine: "#7f4e3d",
     },
 
     {
-      base: "#a16207",
-      gradient: "linear-gradient(to bottom, #fde68a, #d97706, #a16207)",
-      hoverBase: "#d97706",
-      hoverGradient: "linear-gradient(to bottom, #fef3c7, #fde68a, #d97706)",
-      spine: "#78350f",
+      base: "#9f7a3f",
+      gradient: "linear-gradient(to bottom, #ddd0ad, #c3aa74, #9f7a3f)",
+      hoverBase: "#b18e53",
+      hoverGradient: "linear-gradient(to bottom, #ebe2ca, #ddd0ad, #b18e53)",
+      spine: "#6e5630",
     },
 
     {
-      base: "#6b7280",
-      gradient: "linear-gradient(to bottom, #d1d5db, #9ca3af, #6b7280)",
-      hoverBase: "#9ca3af",
-      hoverGradient: "linear-gradient(to bottom, #f3f4f6, #d1d5db, #9ca3af)",
-      spine: "#374151",
+      base: "#75808a",
+      gradient: "linear-gradient(to bottom, #d4d9de, #a7afb8, #75808a)",
+      hoverBase: "#8d98a2",
+      hoverGradient: "linear-gradient(to bottom, #e7eaee, #d4d9de, #8d98a2)",
+      spine: "#4f5962",
     },
 
     {
-      base: "#4d7c0f",
-      gradient: "linear-gradient(to bottom, #bef264, #65a30d, #4d7c0f)",
-      hoverBase: "#65a30d",
-      hoverGradient: "linear-gradient(to bottom, #ecfccb, #bef264, #65a30d)",
-      spine: "#365314",
+      base: "#6f8651",
+      gradient: "linear-gradient(to bottom, #cad7bc, #9cb383, #6f8651)",
+      hoverBase: "#819967",
+      hoverGradient: "linear-gradient(to bottom, #dee6d4, #cad7bc, #819967)",
+      spine: "#4e603a",
     },
 
     {
-      base: "#8b7355",
-      gradient: "linear-gradient(to bottom, #e7d7c1, #b08968, #8b7355)",
-      hoverBase: "#b08968",
-      hoverGradient: "linear-gradient(to bottom, #f3e7d3, #e7d7c1, #b08968)",
-      spine: "#5c4033",
+      base: "#8c7761",
+      gradient: "linear-gradient(to bottom, #dfd2c3, #bba58f, #8c7761)",
+      hoverBase: "#a28d76",
+      hoverGradient: "linear-gradient(to bottom, #ece3d9, #dfd2c3, #a28d76)",
+      spine: "#625241",
     },
 
     {
-      base: "#5a3e36",
-      gradient: "linear-gradient(to bottom, #a47148, #7f5539, #5a3e36)",
-      hoverBase: "#7f5539",
-      hoverGradient: "linear-gradient(to bottom, #e6ccb2, #a47148, #7f5539)",
-      spine: "#3b2a23",
+      base: "#71564e",
+      gradient: "linear-gradient(to bottom, #c9b2a7, #9a7b6e, #71564e)",
+      hoverBase: "#85665b",
+      hoverGradient: "linear-gradient(to bottom, #dccbc2, #c9b2a7, #85665b)",
+      spine: "#503d37",
     },
 
     {
-      base: "#64748b",
-      gradient: "linear-gradient(to bottom, #cbd5e1, #94a3b8, #64748b)",
-      hoverBase: "#94a3b8",
-      hoverGradient: "linear-gradient(to bottom, #f1f5f9, #cbd5e1, #94a3b8)",
-      spine: "#334155",
+      base: "#6f7f92",
+      gradient: "linear-gradient(to bottom, #d1d9e1, #a6b3c1, #6f7f92)",
+      hoverBase: "#8596a8",
+      hoverGradient: "linear-gradient(to bottom, #e5eaf0, #d1d9e1, #8596a8)",
+      spine: "#4d5b6c",
     },
 
     {
-      base: "#1e3a5f",
-      gradient: "linear-gradient(to bottom, #93c5fd, #3b82f6, #1e3a5f)",
-      hoverBase: "#3b82f6",
-      hoverGradient: "linear-gradient(to bottom, #dbeafe, #93c5fd, #3b82f6)",
-      spine: "#172554",
+      base: "#4f6580",
+      gradient: "linear-gradient(to bottom, #c2cfdd, #8ea3bc, #4f6580)",
+      hoverBase: "#667c95",
+      hoverGradient: "linear-gradient(to bottom, #d9e0e9, #c2cfdd, #667c95)",
+      spine: "#394b61",
     },
 
     {
-      base: "#9d4edd",
-      gradient: "linear-gradient(to bottom, #e9d5ff, #c084fc, #9d4edd)",
-      hoverBase: "#c084fc",
-      hoverGradient: "linear-gradient(to bottom, #f5f3ff, #e9d5ff, #c084fc)",
-      spine: "#5b21b6",
+      base: "#836f99",
+      gradient: "linear-gradient(to bottom, #d9d2e3, #b1a3c4, #836f99)",
+      hoverBase: "#9888ab",
+      hoverGradient: "linear-gradient(to bottom, #e6e1ed, #d9d2e3, #9888ab)",
+      spine: "#5f516f",
     },
 
     {
-      base: "#7f1d1d",
-      gradient: "linear-gradient(to bottom, #fca5a5, #b91c1c, #7f1d1d)",
-      hoverBase: "#b91c1c",
-      hoverGradient: "linear-gradient(to bottom, #fee2e2, #fca5a5, #b91c1c)",
-      spine: "#450a0a",
+      base: "#8a5858",
+      gradient: "linear-gradient(to bottom, #ddc2c2, #b58e8e, #8a5858)",
+      hoverBase: "#9d6b6b",
+      hoverGradient: "linear-gradient(to bottom, #ead8d8, #ddc2c2, #9d6b6b)",
+      spine: "#613f3f",
     },
 
     {
-      base: "#78716c",
-      gradient: "linear-gradient(to bottom, #e7e5e4, #a8a29e, #78716c)",
-      hoverBase: "#a8a29e",
-      hoverGradient: "linear-gradient(to bottom, #f5f5f4, #e7e5e4, #a8a29e)",
-      spine: "#44403c",
+      base: "#7f7771",
+      gradient: "linear-gradient(to bottom, #ddd8d4, #b5ada6, #7f7771)",
+      hoverBase: "#948b84",
+      hoverGradient: "linear-gradient(to bottom, #e8e4e1, #ddd8d4, #948b84)",
+      spine: "#5a534d",
     },
 
     {
-      base: "#d6c7b2",
-      gradient: "linear-gradient(to bottom, #f5efe6, #e7d7c1, #d6c7b2)",
-      hoverBase: "#e7d7c1",
-      hoverGradient: "linear-gradient(to bottom, #faf6f0, #f5efe6, #e7d7c1)",
-      spine: "#a68a64",
+      base: "#b8ac9c",
+      gradient: "linear-gradient(to bottom, #eee7dd, #d8cbb9, #b8ac9c)",
+      hoverBase: "#c8bcae",
+      hoverGradient: "linear-gradient(to bottom, #f5f1ea, #eee7dd, #c8bcae)",
+      spine: "#897b69",
     },
   ];
 
-  const paletteIndex = recipeBook.name.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) % bookPalette.length;
+  // Generate a consistent palette index based on the recipe book's name. We use a simple hash function that sums the character codes 
+  // of the name and mods by the palette length to ensure the same recipe book always gets the same colors.
+  const paletteIndex = recipeBook.name.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) % bookPalette.length;  
   const palette = bookPalette[paletteIndex];
   const heightPx = 120 + 2*recipeBook.name.length;
 
@@ -119,17 +121,14 @@ const ClosedRecipeBook = ({
         relative
         w-12
         rounded-[2px]
-        border
         border-l-[5px]
-        border-black/15
         book-spine
-        shadow-md
         flex
         items-center
         justify-center
         overflow-hidden
         transition
-        ${onOpen ? "cursor-pointer hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700/70 focus-visible:ring-offset-2" : ""}
+        ${onOpen ? "cursor-pointer hover:-translate-y-2 hover:shadow-lg" : ""}
       `}
       style={{
         height: `${heightPx}px`,
@@ -139,7 +138,6 @@ const ClosedRecipeBook = ({
         borderLeftColor: palette.spine,
       }}
     >
-      <div className="absolute left-0 right-0 top-0 h-1 bg-white/25" />
       <div className={`z-10 h-[88%] flex items-start justify-start -ml-3`}>
         <p
           className="rotate-180 text-[12px] tracking-wide text-stone-900 font-semibold"

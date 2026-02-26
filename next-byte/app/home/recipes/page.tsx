@@ -5,6 +5,7 @@ import {
 	createRecipe,
 	createRecipeBook,
 	deleteRecipe,
+	deleteRecipeBook,
 	fetchRecipesForRecipeBook,
 	removeRecipesFromRecipeBook,
 	RecipeBookInput,
@@ -19,7 +20,7 @@ import RecipeCreator from "@/components/recipes/RecipeCreator";
 import RecipeBookCreator from "@/components/recipes/RecipeBookCreator";
 import type { RecipeFormState, RecipeBookFormState } from "@/components/recipes/types";
 import { useRecipes } from "@/hooks/useRecipes";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Recipes() {
 	const [isRecipeCreatorOpen, setIsRecipeCreatorOpen] = useState(false);
@@ -45,9 +46,29 @@ export default function Recipes() {
 	const [editingRecipeBookId, setEditingRecipeBookId] = useState<string | null>(null);
 	const [initialRecipeBookForm, setInitialRecipeBookForm] = useState<RecipeBookFormState>(emptyRecipeBookForm);
 	const [openRecipeBookId, setOpenRecipeBookId] = useState<string | null>(null);
-
+	const [pendingDeleteRecipeBookId, setPendingDeleteRecipeBookId] = useState<string | null>(null);
+	const shelfContainerRef = useRef<HTMLDivElement | null>(null);
+	const [booksPerShelf, setBooksPerShelf] = useState(1);
+	const bookWidthPx = 48;
 	const { recipes, recipeBooks, recipeBookRecipes, error, loadRecipes, loadRecipeBooks, loadRecipesForRecipeBook } = useRecipes();
 	const [recipesActionError, setRecipesActionError] = useState("");
+
+	useEffect(() => {
+		const container = shelfContainerRef.current;
+		if (!container) {
+			return;
+		}
+
+		const computeBooksPerShelf = () => {
+			const nextBooksPerShelf = Math.max(1, Math.floor(container.clientWidth / bookWidthPx));
+			setBooksPerShelf(nextBooksPerShelf);
+		};
+
+		computeBooksPerShelf();
+		const resizeObserver = new ResizeObserver(computeBooksPerShelf);
+		resizeObserver.observe(container);
+		return () => resizeObserver.disconnect();
+	}, [recipeBooks.length]);
 
 	const closeRecipeCreator = () => {
 		setIsRecipeCreatorOpen(false);
@@ -61,6 +82,7 @@ export default function Recipes() {
 	};
 
 	const openRecipeEditor = (recipeId: string) => {
+		setOpenRecipeBookId(null);
 		setEditingRecipeId(recipeId);
 		setIsRecipeCreatorOpen(true); // Open recipe creator. Populate it with existing data below. 
 
@@ -109,14 +131,63 @@ export default function Recipes() {
 
 	const openRecipeBook = async (recipeBookId: string) => {
 		setOpenRecipeBookId(recipeBookId);
-		if (!recipeBookRecipes.has(recipeBookId)) {
-			await loadRecipesForRecipeBook(recipeBookId);
+		await loadRecipesForRecipeBook(recipeBookId);
+	}
+
+	const openRecipeBookEditor = async () => {
+		if (!openRecipeBookId) {
+			return;
 		}
+
+		const bookToEdit = recipeBooks.find((book) => book.id === openRecipeBookId);
+		if (!bookToEdit) {
+			return;
+		}
+
+		const selectedRecipes = await fetchRecipesForRecipeBook(openRecipeBookId);
+
+		setEditingRecipeBookId(openRecipeBookId);
+		setInitialRecipeBookForm({
+			name: bookToEdit.name ?? "",
+			isPublic: Boolean(bookToEdit.is_public),
+			recipeIds: new Set(selectedRecipes.map((recipe) => recipe.id)),
+		});
+		setOpenRecipeBookId(null);
+		setIsRecipeBookCreatorOpen(true);
 	}
 
 	const closeRecipeBookReader = () => setOpenRecipeBookId(null);
+	const handleDeleteRecipeBook = () => {
+		if (!openRecipeBookId) {
+			return;
+		}
+		setPendingDeleteRecipeBookId(openRecipeBookId);
+	};
+
+	const confirmDeleteRecipeBook = async () => {
+		if (!pendingDeleteRecipeBookId) return;
+		try {
+			setRecipesActionError("");
+			await deleteRecipeBook(pendingDeleteRecipeBookId);
+			await loadRecipeBooks();
+			setOpenRecipeBookId(null);
+			setPendingDeleteRecipeBookId(null);
+		} catch (err) {
+			setRecipesActionError(err instanceof Error ? err.message : "Unknown error occurred.");
+		}
+	};
+
+	const cancelDeleteRecipeBook = () => {
+		setPendingDeleteRecipeBookId(null);
+	};
+
 	const openRecipeBookDetails = recipeBooks.find((book) => book.id === openRecipeBookId) ?? null;
 	const openRecipeBookRecipes = openRecipeBookId ? (recipeBookRecipes.get(openRecipeBookId) ?? []) : [];
+	const fullShelfWidthPx = booksPerShelf * bookWidthPx;
+	const recipeBookRows = [];
+	for (let index = 0; index < recipeBooks.length; index += booksPerShelf) {
+		recipeBookRows.push(recipeBooks.slice(index, index + booksPerShelf));
+	}
 
 	const handleSaveRecipeBook = async (recipeBookInput: RecipeBookSaveInput) => {
 		// Call update or create based on whether we're editing or creating.
@@ -198,14 +269,14 @@ export default function Recipes() {
 		<div className="p-10 space-y-8">
 			<div className="flex items-center gap-6">
 				<button
-					className="px-6 py-3 rounded-full bg-gradient-to-tr from-orange-200 via-amber-100 to-stone-200 text-stone-900 shadow-sm hover:shadow-md hover:scale-[1.01] transition"
+					className="cursor-pointer px-6 py-3 rounded-full bg-gradient-to-tr from-orange-200 via-amber-100 to-stone-200 text-stone-900 shadow-sm hover:shadow-md hover:scale-[1.01] transition"
 					style={{ fontFamily: "Georgia" }}
 					onClick={openRecipeCreator}
 				>
 					Create Recipe
 				</button>
 				<button
-					className="px-6 py-3 rounded-full bg-gradient-to-tr from-orange-200 via-amber-100 to-stone-200 text-stone-900 shadow-sm hover:shadow-md hover:scale-[1.01] transition"
+					className="cursor-pointer px-6 py-3 rounded-full bg-gradient-to-tr from-orange-200 via-amber-100 to-stone-200 text-stone-900 shadow-sm hover:shadow-md hover:scale-[1.01] transition"
 					style={{ fontFamily: "Georgia" }}
 					onClick={openRecipeBookCreator}
 				>
@@ -222,17 +293,22 @@ export default function Recipes() {
 				<div className="flex flex-col gap-4">
 					<p className="text-xl text-stone-900" style={{ fontFamily: "Georgia" }}>Recipe Books</p>
 					{recipeBooks.length ? (
-						<div className="flex flex-col">
-							<div className="flex items-end">
-								{recipeBooks.map((book) => (
-									<ClosedRecipeBook
-										key={book.id}
-										recipeBook={book}
-										onOpen={openRecipeBook}
-									/>
-								))}
-							</div>
-							<hr className="basis-full border-t-5 border-stone-500" />
+						<div ref={shelfContainerRef} className="flex flex-col gap-5">
+							{recipeBookRows.map((row, rowIndex) => (
+								<div key={`row-${rowIndex}`} className="inline-flex flex-col self-start" style={{ width: `${fullShelfWidthPx}px` }}>
+									<div className="flex items-end">
+										{row.map((book) => (
+											<div key={book.id}>
+												<ClosedRecipeBook
+													recipeBook={book}
+													onOpen={openRecipeBook}
+												/>
+											</div>
+										))}
+									</div>
+									<hr className="w-full border-t-5 border-stone-500" />
+								</div>
+							))}
 						</div>
 					) : (
 						<p className="text-sm text-stone-500">No recipe books yet. Create your first recipe book.</p>
@@ -247,6 +323,18 @@ export default function Recipes() {
 				onSave={handleSaveRecipe}
 			/>
 
+			<OpenRecipeBook
+				key={openRecipeBookId ?? "closed-recipe-book"}
+				isOpen={Boolean(openRecipeBookId)}
+				recipeBookName={openRecipeBookDetails?.name ?? "Recipe Book"}
+				recipes={openRecipeBookRecipes}
+				onClose={closeRecipeBookReader}
+				onEditBook={openRecipeBookEditor}
+				onDeleteBook={handleDeleteRecipeBook}
+				onEdit={openRecipeEditor}
+				onDelete={handleDelete}
+			/>
+
 			<RecipeBookCreator
 				isOpen={isRecipeBookCreatorOpen}
 				recipes={recipes}
@@ -254,16 +342,6 @@ export default function Recipes() {
 				initialForm={initialRecipeBookForm}
 				onClose={closeRecipeBookCreator}
 				onSave={handleSaveRecipeBook} // TODO: Implement this and pass it down. It will need to call loadRecipeBooks after saving, and maybe loadRecipesForRecipeBook if we want to immediately show the recipes in the book after creating/editing it. 
-			/>
-
-			<OpenRecipeBook
-				key={openRecipeBookId ?? "closed-recipe-book"}
-				isOpen={Boolean(openRecipeBookId)}
-				recipeBookName={openRecipeBookDetails?.name ?? "Recipe Book"}
-				recipes={openRecipeBookRecipes}
-				onClose={closeRecipeBookReader}
-				onEdit={openRecipeEditor}
-				onDelete={handleDelete}
 			/>
 
 			{pendingDeleteRecipeId ? (
@@ -293,6 +371,32 @@ export default function Recipes() {
 				</div>
 			) : null}
 
+			{pendingDeleteRecipeBookId ? (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+					<div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl space-y-4">
+						<p className="text-lg text-stone-900" style={{ fontFamily: "Georgia" }}>
+							Delete this recipe book?
+						</p>
+						<p className="text-sm text-stone-600">
+							This action cannot be undone. The recipe book will be deleted.
+						</p>
+						<div className="flex items-center justify-end gap-3">
+							<button
+								className="px-4 py-2 rounded-full border border-stone-200 text-stone-700 hover:border-stone-300"
+								onClick={cancelDeleteRecipeBook}
+							>
+								Cancel
+							</button>
+							<button
+								className="px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+								onClick={confirmDeleteRecipeBook}
+							>
+								Delete
+							</button>
+						</div>
+					</div>
+				</div>
+			) : null}
 		</div>
 	);
 }
