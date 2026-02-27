@@ -34,7 +34,7 @@ const OpenRecipeBook = ({
     const query = searchQuery.trim().toLowerCase();
     return recipes
       .map((recipe, index) => ({ recipe, index }))
-      .filter(({ recipe, index }) => {
+      .filter(({ recipe }) => {
         if (!query) return true;
         const recipeName = (recipe.name ?? "").toLowerCase();
         return recipeName.includes(query);
@@ -63,7 +63,7 @@ const OpenRecipeBook = ({
               <button
                 type="button"
                 onClick={onEditBook}
-                className="px-4 py-2 rounded-full border border-stone-200/40 text-stone-50 hover:border-stone-200/70 hover:bg-stone-100/10 text-sm"
+                className="cursor-pointer px-4 py-2 rounded-full border border-stone-200/40 text-stone-50 hover:border-stone-200/70 hover:bg-stone-100/10 text-sm"
               >
                 Edit Book
               </button>
@@ -72,7 +72,7 @@ const OpenRecipeBook = ({
               <button
                 type="button"
                 onClick={onDeleteBook}
-                className="px-4 py-2 rounded-full border border-red-300/60 text-red-100 hover:border-red-200 hover:bg-red-200/15 text-sm"
+                className="cursor-pointer px-4 py-2 rounded-full border border-red-300/60 text-red-100 hover:border-red-200 hover:bg-red-200/15 text-sm"
               >
                 Delete Book
               </button>
@@ -124,7 +124,7 @@ const OpenRecipeBook = ({
                         setSelectedRecipeIndex(index);
                         setShowTableOfContents(false);
                       }}
-                      className="text-left rounded-xl border border-amber-200 bg-white/75 px-4 py-3 hover:border-amber-300 hover:bg-white"
+                      className="cursor-pointer text-left rounded-xl border border-amber-200 bg-white/75 px-4 py-3 hover:border-amber-300 hover:bg-white"
                     >
                       <p className="text-sm text-stone-900">
                         <span className="font-semibold"></span> {recipe.name || "Untitled Recipe"}
@@ -146,7 +146,7 @@ const OpenRecipeBook = ({
                   type="button"
                   onClick={() => setSelectedRecipeIndex((prev) => Math.max(prev - 1, 0))}
                   disabled={!canGoBack}
-                  className="px-4 py-2 rounded-full border border-stone-300 bg-white text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed hover:border-stone-400"
+                  className="cursor-pointer px-4 py-2 rounded-full border border-stone-300 bg-white text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed hover:border-stone-400"
                 >
                   <ArrowLeft size={14} />
                 </button>
@@ -157,7 +157,7 @@ const OpenRecipeBook = ({
                   type="button"
                   onClick={() => setSelectedRecipeIndex((prev) => Math.min(prev + 1, recipes.length - 1))}
                   disabled={!canGoNext}
-                  className="px-4 py-2 rounded-full border border-stone-300 bg-white text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed hover:border-stone-400"
+                  className="cursor-pointer px-4 py-2 rounded-full border border-stone-300 bg-white text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed hover:border-stone-400"
                 >
                   <ArrowRight size={14} />
                 </button>

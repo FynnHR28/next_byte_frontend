@@ -44,3 +44,16 @@ export const loginUser = async (email: string, password: string) => {
       variables: { email, password },
     })
 }
+
+/**
+ * Logs out the current user by invalidating their JWT on the server and clearing the cookie.
+ */
+export const logout = async () => {
+  await request({
+    query: `
+        mutation logout {
+          logout 
+        }
+        `
+    })
+}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Settings } from "lucide-react";
-import { request } from "@/api_client/api_request";
+import { logout } from "@/api_client/auth";
 
 const navRouteStyle = "text-stone-600 text-lg hover:underline hover:underline-offset-6 hover:text-stone-800";
 const navActiveStyle = "text-stone-900 text-lg underline underline-offset-6";
@@ -17,20 +17,10 @@ export default function HomeLayout({
   const pathname = usePathname(); // Get the current URL path (reacts to changes)
   const isActive = (href: string) => pathname === href; // Active if link href matches current url path
   const router = useRouter();
-  const logout = async () => {
-    await request({
-      query: `
-          mutation logout {
-            logout 
-          }
-          `
-      })
-    router.push('/auth/login')
-  }
 
   return (
     <main className="min-h-screen bg-app-gradient">
-      <div className="w-full h-20 bg-gray-50 shadow-lg sticky top-0 z-50 flex gap-10 items-center px-10">
+      <div className="w-full h-20 bg-gray-50 shadow-lg sticky top-0 z-50 flex gap-10 items-center px-10 whitespace-nowrap">
         <Link
           href="/home"
           className={isActive("/home") ? navActiveStyle : navRouteStyle}
@@ -53,6 +43,13 @@ export default function HomeLayout({
           Recipes
         </Link>
         <Link
+          href="/home/recipe-books"
+          className={isActive("/home/recipe-books") ? navActiveStyle : navRouteStyle}
+          style={{ fontFamily: "Georgia" }}
+        >
+          Recipe Books
+        </Link>
+        <Link
           href="/home/restaurants"
           className={
             isActive("/home/restaurants") ? navActiveStyle : navRouteStyle
@@ -72,7 +69,11 @@ export default function HomeLayout({
             <button 
               className={`cursor-pointer ${navRouteStyle}`}  
               style={{ fontFamily: "Georgia" }}
-              onClick={() => logout()}
+              onClick={() => 
+                logout()
+                  .then(() => router.push("/auth/login"))
+                  .catch((err) => console.error("Logout failed:", err))
+              }
             >
               Logout
             </button>
