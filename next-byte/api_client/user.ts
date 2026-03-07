@@ -54,3 +54,37 @@ export const getCurrentUser = async () : Promise<User | null> => {
   // Unpack the username and created at fields into the User object
   return response.data.me ? { ...response.data.me } as User : null;
 }
+
+/**
+ * Sends the token passed as a query in the url from a verification email
+ * 
+ * @returns a bool value based on action success
+ */
+export const verifyUserEmail = async (verifyToken:string) => {
+  const response = await request({
+    query: `
+      mutation verifyUserEmail($verifyToken: String!) {
+        verifyUserEmail(verifyToken: $verifyToken)
+      }
+    `,	
+    variables: { verifyToken: verifyToken }
+  })
+  return response.data.verifyUserEmail;
+}
+
+/**
+ * requests an verification email to be sent to the user
+ * 
+ * @returns a bool value based on action success
+ */
+export const sendVerificationEmail = async (email:string) => {
+  const response = await request({
+    query: `
+      mutation sendVerificationEmail($email: String!) {
+        sendVerificationEmail(email: $email)
+      }
+    `,	
+    variables: { email: email }
+  })
+  return response.data.sendVerificationEmail;
+}

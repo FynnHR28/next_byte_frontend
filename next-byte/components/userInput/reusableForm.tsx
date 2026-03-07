@@ -4,7 +4,7 @@ import { buttonStyle } from "@/app/auth/styles";
 
 
 
-const ReForm = ({ defaultValues, children, onSubmit, className, error, onValuesChange }:any) =>  {
+const ReForm = ({ defaultValues, children, onSubmit, className, error, onValuesChange, editable, submittingMsg, buttonContent }:any) =>  {
   const methods = useForm({ defaultValues });
   const { register, formState, handleSubmit, watch } = methods;
   const { errors } = formState;
@@ -39,7 +39,7 @@ const ReForm = ({ defaultValues, children, onSubmit, className, error, onValuesC
         type="submit"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Signing in..." : "Sign In"}
+        {isSubmitting ? `${submittingMsg}` : `${buttonContent}`}
       </button>
       {error ? (
             <p className="text-sm text-red-600" style={{ fontFamily: "Verdana" }}>

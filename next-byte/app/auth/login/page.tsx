@@ -58,6 +58,8 @@ export default function Login() {
           onValuesChange={(values: Record<string, string>) => {
             setEmail(values.email ?? "");
           }}
+          submittingMsg = 'Signing in...'
+          buttonContent = 'Sign in'
         >
             <Input 
               inputStyle={inputStyle} 
