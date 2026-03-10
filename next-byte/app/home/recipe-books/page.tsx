@@ -14,6 +14,7 @@ import {
   updateRecipeBook,
 } from "@/api_client/recipes";
 import ClosedRecipeBook from "@/components/recipes/ClosedRecipeBook";
+import { widthPx } from "@/components/recipes/ClosedRecipeBook";
 import OpenRecipeBook from "@/components/recipes/OpenRecipeBook";
 import RecipeCreator from "@/components/recipes/RecipeCreator";
 import RecipeBookCreator from "@/components/recipes/RecipeBookCreator";
@@ -43,15 +44,13 @@ export default function RecipeBooksPage() {
   const [bookIdBeingEditedFrom, setBookIdBeingEditedFrom] = useState<string | null>(null);
   const [isRecipeBookCreatorOpen, setIsRecipeBookCreatorOpen] = useState(false);
   const [editingRecipeBookId, setEditingRecipeBookId] = useState<string | null>(null);
-  const [initialRecipeBookForm, setInitialRecipeBookForm] =
-    useState<RecipeBookFormState>(emptyRecipeBookForm);
+  const [initialRecipeBookForm, setInitialRecipeBookForm] = useState<RecipeBookFormState>(emptyRecipeBookForm);
   const [openRecipeBookId, setOpenRecipeBookId] = useState<string | null>(null);
   const [pendingDeleteRecipeBookId, setPendingDeleteRecipeBookId] = useState<string | null>(null);
   const [recipesActionError, setRecipesActionError] = useState("");
 
   const shelfContainerRef = useRef<HTMLDivElement | null>(null);
   const [booksPerShelf, setBooksPerShelf] = useState(1);
-  const bookWidthPx = 48;
 
   const {
     recipes,
@@ -70,7 +69,7 @@ export default function RecipeBooksPage() {
     }
 
     const computeBooksPerShelf = () => {
-      const nextBooksPerShelf = Math.max(1, Math.floor(container.clientWidth / bookWidthPx));
+      const nextBooksPerShelf = Math.max(1, Math.floor(container.clientWidth / widthPx));
       setBooksPerShelf(nextBooksPerShelf);
     };
 
@@ -246,7 +245,7 @@ export default function RecipeBooksPage() {
   const openRecipeBookRecipes = openRecipeBookId
     ? recipeBookRecipes.get(openRecipeBookId) ?? []
     : [];
-  const fullShelfWidthPx = booksPerShelf * bookWidthPx;
+  const fullShelfWidthPx = booksPerShelf * widthPx;
   const recipeBookRows = [];
   for (let index = 0; index < recipeBooks.length; index += booksPerShelf) {
     recipeBookRows.push(recipeBooks.slice(index, index + booksPerShelf));
@@ -271,26 +270,40 @@ export default function RecipeBooksPage() {
       {recipesActionError ? <p className="text-sm text-red-500">{recipesActionError}</p> : null}
 
       {recipeBooks.length ? (
-        <div ref={shelfContainerRef} className="flex flex-col gap-5">
+        <div ref={shelfContainerRef} className="flex flex-col gap-6">
           {recipeBookRows.map((row, rowIndex) => (
             <div
               key={`row-${rowIndex}`}
-              className="inline-flex flex-col self-start"
+              className="self-start"
               style={{ width: `${fullShelfWidthPx}px` }}
             >
-              <div className="flex items-end">
-                {row.map((book) => (
-                  <div key={book.id}>
-                    <ClosedRecipeBook recipeBook={book} onOpen={openRecipeBook} />
-                  </div>
-                ))}
+              <div className="relative w-full">
+                {/* Shelf drawn first, behind everything */}
+                <div className="absolute inset-x-0 bottom-0 h-6">
+                  {/* Shelf */}
+                  <div className="absolute inset-x-0 bottom-2 h-4 bg-gradient-to-b from-[#c9b8a3] via-[#a78f77] to-[#8b735d]" />
+                  {/* Highlight */}
+                  <div className="absolute inset-x-0 bottom-[17px] h-px bg-white/25" />
+                </div>
+
+                {/* Books sit on top of the shelf */}
+                <div className="relative z-10 flex items-end pb-3.75">
+                  {row.map((book) => (
+                    <div
+                      key={book.id}
+                    >
+                      <ClosedRecipeBook recipeBook={book} onOpen={openRecipeBook} />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <hr className="w-full border-t-5 border-stone-500" />
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-stone-500">No recipe books yet. Create your first recipe book.</p>
+        <p className="text-sm text-stone-500">
+          No recipe books yet. Create your first recipe book.
+        </p>
       )}
 
       <OpenRecipeBook
