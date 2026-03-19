@@ -246,9 +246,14 @@ export default function RecipeBooksPage() {
     ? recipeBookRecipes.get(openRecipeBookId) ?? []
     : [];
   const fullShelfWidthPx = booksPerShelf * widthPx;
+  const sortedRecipeBooks = [...recipeBooks].sort((a, b) => {
+    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return dateA - dateB;
+  });
   const recipeBookRows = [];
-  for (let index = 0; index < recipeBooks.length; index += booksPerShelf) {
-    recipeBookRows.push(recipeBooks.slice(index, index + booksPerShelf));
+  for (let index = 0; index < sortedRecipeBooks.length; index += booksPerShelf) {
+    recipeBookRows.push(sortedRecipeBooks.slice(index, index + booksPerShelf));
   }
 
   return (

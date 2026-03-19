@@ -106,7 +106,7 @@ const ClosedRecipeBook = ({
       className={`
         group relative overflow-hidden rounded-[2px]
         transition-all duration-100
-        ${onOpen ? "cursor-pointer hover:-translate-y-2 hover:shadow-md" : ""}
+        ${onOpen ? "cursor-pointer hover:-translate-y-3 hover:shadow-md" : ""}
       `}
       style={{
         width: `${widthPx}px`,
